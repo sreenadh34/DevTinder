@@ -58,6 +58,20 @@ app.delete("/user", async (req, res) => {
   }
 });
 
+// Update data of the user
+app.patch("/user", async (req, res) => {
+  const userId = req.body.userId;
+  const data = req.body;
+  try {
+    const user = await User.findByIdAndUpdate({ _id: userId }, data, {
+      returnDocument: "after",
+    });
+    res.send("User updated successfully");
+  } catch (err) {
+    res.status(400).send("Something went wrong ");
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
