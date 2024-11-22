@@ -2,6 +2,7 @@ import express from "express";
 import connectDB  from "./config/database.js";
 import User from "./models/user.js";
 import { validateSignUpData } from "./utils/validation.js";
+import bcrypt from "bcrypt";
 
 connectDB();
 
@@ -14,12 +15,23 @@ app.post("/signup", async (req,res) => {
   
   try{
     validateSignUpData(req);
+
+    const { firstName, lastName, emailId, password } = req.body;
+
+     // Encrypt the password
+    const passwordHash = await bcrypt.hash(password, 10);
+
     // creting a new instance of User model
-  const user = new User(req.body);
+  const user = new User({
+    firstName,
+    lastName,
+    emailId,
+    password: passwordHash,
+  });
   await user.save();
   res.send("User added successfully");
   } catch(err) {
-    res.status(400).send("Error saving user" + err.message );
+    res.status(400).send("Error :" + err.message );
   }
 });
 // Get user by email
