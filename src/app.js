@@ -1,7 +1,7 @@
 import express from "express";
 import connectDB  from "./config/database.js";
 import User from "./models/user.js";
-
+import { validateSignUpData } from "./utils/validation.js";
 
 connectDB();
 
@@ -11,9 +11,11 @@ const PORT = process.env.PORT || 3001;
 app.use(express.json())
 
 app.post("/signup", async (req,res) => {
-  // creting a new instance of User model
-  const user = new User(req.body);
+  
   try{
+    validateSignUpData(req);
+    // creting a new instance of User model
+  const user = new User(req.body);
   await user.save();
   res.send("User added successfully");
   } catch(err) {
