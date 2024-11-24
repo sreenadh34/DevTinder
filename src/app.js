@@ -3,6 +3,9 @@ import connectDB  from "./config/database.js";
 import User from "./models/user.js";
 import { validateSignUpData } from "./utils/validation.js";
 import bcrypt from "bcrypt";
+import cookieParser from "cookie-parser";
+import jwt from "jsonwebtoken";
+
 
 connectDB();
 
@@ -10,6 +13,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(express.json())
+app.use(cookieParser());
 
 app.post("/signup", async (req,res) => {
   
@@ -69,6 +73,31 @@ app.post("/login", async (req, res) => {
     res.status(400).send("ERROR : " + err.message);
   }
 });
+
+app.get("/profile", async (req, res) => {
+  try {s
+    const cookies = req.cookies;
+
+    const { token } = cookies;
+    if (!token) {
+      throw new Error("Invalid Token");s
+    }
+
+    const decodedMessage = await jwt.verify(token, "DEV@Tinder$790");
+
+    const { _id } = decodedMessage;
+
+    const user = await User.findById(_id);
+    if (!user) {
+      throw new Error("User does not exist");
+    }
+
+    res.send(user);
+  } catch (err) {
+    res.status(400).send("ERROR : " + err.message);
+  }
+});
+
 
 // Feed API - GET /feed - get all the users from the database
 app.get("/feed", async (req, res) => {
