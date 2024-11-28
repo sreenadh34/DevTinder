@@ -75,12 +75,12 @@ app.post("/login", async (req, res) => {
 });
 
 app.get("/profile", async (req, res) => {
-  try {s
+  try {
     const cookies = req.cookies;
 
     const { token } = cookies;
     if (!token) {
-      throw new Error("Invalid Token");s
+      throw new Error("Invalid Token");
     }
 
     const decodedMessage = await jwt.verify(token, "DEV@Tinder$790");
