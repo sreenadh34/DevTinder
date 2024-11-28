@@ -10,7 +10,8 @@ import jwt from "jsonwebtoken";
 connectDB();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT =process.env.PORT;
+
 
 app.use(express.json())
 app.use(cookieParser());
@@ -65,6 +66,12 @@ app.post("/login", async (req, res) => {
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (isPasswordValid) {
+       // Create a JWT Token
+
+      const token = await jwt.sign({ _id: user._id }, "DEV@Tinder$790");
+
+      // Add the token to cookie and send the response back to the user
+      res.cookie("token", token);
       res.send("Login Successful!!!");
     } else {
       throw new Error("Invalid credentials");
